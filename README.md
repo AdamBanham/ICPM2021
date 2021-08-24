@@ -7,7 +7,16 @@ If you wanted an in-depth understanding of the data available in this dataset, p
 We assume that you already have access to the data to reproduce the ETL steps for creating two datasets used for a ICPM2021 submission, a movements log and a procedure log. <br>
 We also assume that you have an AWS account and are familiar with python, SQL and AWS services. In-depth knowledge of any of these languages are not needed, but some introduction knowledge will be helpful.<br>
 
-# Step One - Create Querable Interface
+## Disclaimer
+Note that AWS services are not free. However, AWS does provide a level of freeness below a usage level. Therefore, following these steps to execute the creation of these datasets should not cost more than a dollar in the worst case. <br>
+But we do not guarantee that following these steps will not result in a charge to your account.<br>
+We recommend using cloud storage and cloud services to use this dataset as it provides universal access across many different types of personal computers available today.<br>
+
+
+# Step One - Create Queryable Interface
+
+aws cli - https://github.com/aws/aws-cli/tree/v2
+
 
 
 # Step Two - Running Queries
