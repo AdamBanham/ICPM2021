@@ -24,7 +24,7 @@ Using the web interface for aws console management, you can check if you have ac
 
 Which should provide the following output back: <br>
 
-(data/in/cloudshell.png)[data/in/cloudshell.png]
+![cloudshell example](data/in/cloudshell.png)
 
 # Step One - Create Queryable Interface
 
