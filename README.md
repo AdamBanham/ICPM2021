@@ -12,8 +12,22 @@ Note that AWS services are not free. However, AWS does provide a level of freene
 But we do not guarantee that following these steps will not result in a charge to your account.<br>
 We recommend using cloud storage and cloud services to use this dataset as it provides universal access across many different types of personal computers available today.<br>
 
+# Step Zero - Get Access 
+Johnson has set up access on two cloud services providers, Google and AWS. To access these datasets so that you don't need to download the files locally then reupload them to a cloud service, ensure that you follow the steps below to request access to the dataset already on the cloud service. <br>
+Follow steps for AWS : <br> 
+(1) https://mimic.mit.edu/docs/gettingstarted/cloud/link/ <br> 
+(2) https://mimic.mit.edu/docs/gettingstarted/cloud/request/ <br>
+
+Using the web interface for aws console management, you can check if you have access by using a cloudshell terminal and running the following line of code: <br>
+
+```aws s3 ls s3://mimic-iii-physionet ```
+
+Which should provide the following output back: <br>
+
+(data/in/cloudshell.png)[data/in/cloudshell.png]
 
 # Step One - Create Queryable Interface
+
 
 aws cli - https://github.com/aws/aws-cli/tree/v2
 
