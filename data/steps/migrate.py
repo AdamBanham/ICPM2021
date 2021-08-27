@@ -4,7 +4,7 @@ import json
 import hashlib
 import sys 
 
-OUTPUT_PATH = "data/out/copy_out.json"
+OUTPUT_PATH = "data/out/migrate_out.json"
 
 if __name__ == "__main__":
     # get user input
