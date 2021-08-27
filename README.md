@@ -27,9 +27,24 @@ Which should provide the following output back: <br>
 ![cloudshell example](data/in/cloudshell.png)
 
 # Step One - Create Queryable Interface
+Now that we have access to the data, we recommend that you create a copy of the MIMIC-III data set in your local in region if you are not located near us-east-1 (North Virginia).<br>
+Before doing so, we require that you setup the AWS cli on your local computer for this step and future steps requiring python scripts.<br>
+For more information on the AWS cli see : <br> https://github.com/aws/aws-cli/tree/v2 <br>
+
+For the rest of these steps, we assume that your have a python 3.7+ environment and have installed pipenv for recreate our development environment.
+For more information on pipenv see: <br> https://pipenv.pypa.io/en/latest/ <br>
+
+To install the development environment on your local computer, open a terminal and navigate to the root folder and then run the following commands: <br>
+```
+pipenv install
+pipenv shell
+```
+![pipenv install example](data/in/pipenv_install.png)
+You should now have activated a virtual environment matching the original development environment used to generate data sets.
 
 
-aws cli - https://github.com/aws/aws-cli/tree/v2
+After setting up AWS and configuring it for the region which is closest to your self, data/steps/01/copy.py will create a copy of MIMIC-III data set.
+
 
 
 
