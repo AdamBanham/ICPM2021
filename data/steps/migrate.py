@@ -53,7 +53,7 @@ if __name__ == "__main__":
         hash = hashlib.md5(json.dumps(out).encode()).hexdigest()
         out['hash'] = hash 
         # save output
-        json.dump(out,open(OUTPUT_PATH,'w'))
+        json.dump(out,open(OUTPUT_PATH,'w'),indent=2)
     else:
         print("unable to find migration target, stopping process...")
     print("Finished...")

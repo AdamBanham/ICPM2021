@@ -6,6 +6,7 @@ import hashlib
 LOCATION_KEY = "###LOCATION###"
 DATABASE_NAME = "###DBNAME###"
 TEMPLATE_LOCATION = "data/in/athena_template.yaml"
+OUTPUT_PATH = "data/out/construct_out.json"
 
 
 try :
@@ -83,6 +84,18 @@ if __name__ == "__main__":
                     stack = stacker
                     break 
         print(f"[{udid}] stack construction completed...")
+        # save out user input
+        out = {
+            'stackname' : stack_name,
+            'databasename' : database_name,
+            'tags' : tags,
+            'stackid' : udid
+        }
+        # add hash
+        hash = hashlib.md5(json.dumps(out).encode()).hexdigest()
+        out['hash'] = hash 
+        # save output
+        json.dump(out,open(OUTPUT_PATH,'w'),indent=2)
     except client.exceptions.AlreadyExistsException:
         print("Failed to create stack, as stackname is already in use.")
 
