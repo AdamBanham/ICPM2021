@@ -40,10 +40,18 @@ pipenv install
 pipenv shell
 ```
 ![pipenv install example](data/in/pipenv_install.png)
+<br>
 You should now have activated a virtual environment matching the original development environment used to generate data sets.
+After setting up the development environment and configuring AWS cli for the region which is closest to your self, data/steps/01/copy.py will create a copy of MIMIC-III data set.
 
-
-After setting up AWS and configuring it for the region which is closest to your self, data/steps/01/copy.py will create a copy of MIMIC-III data set.
+run the following command to begin the migration from us-east-1 to your desired region:<br>
+```
+python "./data/steps/copy.py" 
+```
+OR if you are not in the pipenv shell:<br>
+```
+pipenv run "./data/steps/copy.py"
+```
 
 
 
