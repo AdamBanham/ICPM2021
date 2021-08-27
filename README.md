@@ -53,6 +53,13 @@ OR if you are not in the pipenv shell:<br>
 pipenv run "python" "./data/steps/migrate.py"
 ```
 
+After running this script sucessfully, a output file will be made, ```data/out/migrate_out.json```. This file is used in future steps and is hashed to managed states between scripts.
+Now that we have a local region copy of the mimic-iii dataset, we follow example presented by AWS at: <br>https://aws.amazon.com/blogs/big-data/perform-biomedical-informatics-without-a-database-using-mimic-iii-data-and-amazon-athena/<br>.
+Both the difference in compute times (1557s/157s) and cost ($2.97/$0.05) are notable in the example.
+However, we have modified their cloud formation template and created a script to handle the launching of these resources.
+The cloud formation file can be found [here](data/in/athena_template.yaml), for inspection. 
+This will create a athena database and optimised table for each csv in mimic-iii data set.
+
 
 
 
