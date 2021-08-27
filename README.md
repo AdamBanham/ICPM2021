@@ -46,11 +46,11 @@ After setting up the development environment and configuring AWS cli for the reg
 
 run the following command to begin the migration from us-east-1 to your desired region:<br>
 ```
-python "./data/steps/copy.py" 
+python "./data/steps/migrate.py" 
 ```
 OR if you are not in the pipenv shell:<br>
 ```
-pipenv run "./data/steps/copy.py"
+pipenv run "python" "./data/steps/migrate.py"
 ```
 
 
