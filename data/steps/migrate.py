@@ -41,7 +41,6 @@ if __name__ == "__main__":
             location,
             "--source-region",
             "us-east-1",
-            "--dryrun"
         ])
 
         print(f"Mirgation completed :: {push}")
