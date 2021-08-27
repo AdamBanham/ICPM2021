@@ -19,7 +19,7 @@ Resources:
     Properties:
       DatabaseInput:
         Description: MIMIC-III Database in Parquet format
-        Name: "mimiciii-dummy"
+        Name: "###DBNAME###"
       CatalogId: !Ref AWS::AccountId
 
   admissionsTable:
