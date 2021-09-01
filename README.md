@@ -60,7 +60,25 @@ However, we have modified their cloud formation template and created a script to
 The cloud formation file can be found [here](data/in/athena_template.yaml), for inspection. 
 This will create a athena database and optimised table for each csv in mimic-iii data set.
 
+Run the following commands to create a cloud formation stack, which will deploy all the needed resources to run our ETL scripts over athena.
 
+```
+python "./data/steps/construct.py"
+```
+OR if you are not in the pipenv shell:<br>
+```
+pipenv run "python" "./data/steps/construct.py"
+```
+
+Once you have finished with the querable athena database, you can run the following command to remove the resources allocation.
+
+```
+python "./data/steps/remove_stack.py"
+```
+OR if you are not in the pipenv shell:<br>
+```
+pipenv run "python" "./data/steps/remove_stack.py"
+```
 
 
 # Step Two - Running Queries
