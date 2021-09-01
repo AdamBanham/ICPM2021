@@ -10,7 +10,7 @@ from os import path
 
 CONSTRUCT_PARAMS = "data/out/construct_out.json"
 MIGRATE_OUT = "data/out/migrate_out.json"
-
+BATCH_SIZE = 500
 QUERY_DBNAME_REPLACE = "##dbname##"
 
 def update_query_dbname(query:str) -> str:
