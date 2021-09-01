@@ -69,8 +69,9 @@ OR if you are not in the pipenv shell:<br>
 ```
 pipenv run "python" "./data/steps/construct.py"
 ```
-
-Once you have finished with the querable athena database, you can run the following command to remove the resources allocation.
+After running this command, if the stack was constructed, a output file will be made at ```data/out/construct_out.json```.<br>
+This file is used in the future steps and is hashed to manage states between scripts.<br>
+Once you have finished with the querable athena database, you can run the following command to remove the resources allocation.<br>
 
 ```
 python "./data/steps/remove_stack.py"
