@@ -130,3 +130,6 @@ dmypy.json
 
 # json dat outs
 data/out/*.json
+
+#csv files
+*.csv
