@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 boto3 = "*"
 awscli = "*"
+tqdm = "*"
+pandas = "*"
+more-itertools = "*"
 
 [dev-packages]
 
