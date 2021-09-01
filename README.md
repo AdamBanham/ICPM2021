@@ -80,9 +80,41 @@ OR if you are not in the pipenv shell:<br>
 ```
 pipenv run "python" "./data/steps/remove_stack.py"
 ```
-
-
 # Step Two - Running Queries
+Now that we have a querable interface on AWS, we can run the next group of python scripts to extract and perform some of the transformation steps.
+
+These scripts will require internet access to request athena to run queries and will download the outcome of queries into ```mimiciii/out/```.
+
+The first step to collect exogenous datapoints of interest for this study. 
+Run the following command to query for datapoints and create a local copy.
+Ensure that you run these commands from the root directory (where this readme.md is located).
+
+```
+python ./mimiciii/steps/exogenous.py
+```
+OR if you are not in the pipenv shell:<br>
+```
+pipenv run "python" "./mimiciii/steps/exogenous.py"
+```
+
+This script will query mimiciii in for a collection of patient observations, then record a single csv for each patient in ```mimiciii/out/exogenous/```.
+A record of patients and their identifiers from mimic-iii extracted by this script can found be found in ```mimiciii/out/exogenous/patient_universe.csv```.
+Depending on your internet connection, the script will roughly take ~10minutes.
+
+The next step is to collect the control flow perspective for the movements event log. 
+This event log considers events to be the movement or requested movement of a patient between ICU wards.
+Again this script will query athena in partitions and will output a single csv containing all events for this event log, ```mimiciii/out/movements/controlflow_events.csv```.
+Depending on your internet connection, the script will roughly take 10~20minutes.
+
+
+```
+python ./mimiciii/steps/movements.py
+```
+OR if you are not in the pipenv shell:<br>
+```
+pipenv run "python" "./mimiciii/steps/movements.py"
+```
+
 
 
 # Step Three - Transformation of data to XES
