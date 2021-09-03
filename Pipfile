@@ -9,6 +9,9 @@ awscli = "*"
 tqdm = "*"
 pandas = "*"
 more-itertools = "*"
+matplotlib = "*"
+scipy = "*"
+joblib = "*"
 
 [dev-packages]
 
