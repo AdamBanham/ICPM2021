@@ -372,7 +372,7 @@ def threaded_work(filenames,cache_num,plots=False,debug=False):
     exo_controlflow.to_csv(f"{CACHE_DIR}exo/{cache_num}.csv",index=False)
     exoOnly_controflow.to_csv(f"{CACHE_DIR}exoonly/{cache_num}.csv",index=False)
 
-def threaded_workflow():
+def threaded_workflow(debug:bool=False):
     # clear cache folder
     files = glob(CACHE_DIR+"**/*.csv")
     tqdm.write("clearing cache...")
@@ -385,7 +385,7 @@ def threaded_workflow():
     tqdm.write("starting work...")
     with Parallel(n_jobs=NUM_THREADS,verbose=-1) as pool:
         # begin workers
-        pool(delayed(threaded_work)(filegroup,group,False,False) for group,filegroup in enumerate(tqdm(filenames,desc="thread batchs",ncols=150,total=total_batchs)) )
+        pool(delayed(threaded_work)(filegroup,group,False,debug) for group,filegroup in enumerate(tqdm(filenames,desc="thread batchs",ncols=150,total=total_batchs)) )
     # collected cached csvs and recompose
     fileset = [glob(CACHE_DIR+"endo/*.csv"),glob(CACHE_DIR+"exo/*.csv"),glob(CACHE_DIR+"exoonly/*.csv")]
     swaps = ["newcontrolflow","exocontrolflow","exoOnlycontrolflow"]
@@ -611,10 +611,23 @@ if __name__ == "__main__":
         print("Unknown option for -threaded: possible options are ['true','false']")
         sys.exit(1)
 
+    debug = False
+
+    try : 
+        if arg_dict['-debug'] == 'on':
+            debug = True 
+        else :
+            raise ValueError
+    except KeyError:
+        pass 
+    except ValueError:
+        print("Unknown option for -debug: possible options are ['on']")
+        sys.exit(1)
+
     print("set up completed...")
     if (THREADED_WORKFLOW):
         # threadpool to speed up computation
-        threaded_workflow()
+        threaded_workflow(debug=debug)
     else :
         # run workflow that uses doesn't use threads
-        single_threaded_workflow()
+        single_threaded_workflow(debug=debug)
