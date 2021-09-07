@@ -11,6 +11,8 @@ import json
 from typing import Tuple
 import sys
 
+from ults import get_hash_checksum
+
 import hashlib
 def md5(fname):
     hash_md5 = hashlib.md5()
@@ -224,7 +226,7 @@ def threaded_work(filenames,cache_num,plots=False,debug=False):
     patients = [ filename.split("_")[-1].split(".")[0] for filename in filenames if filename != None ]
     new_controlflow = new_controlflow[new_controlflow.trace_patient.isin(patients)]
     # loop through patients
-    for filename in filenames:
+    for filename in [ file for file in filenames if file != None]:
         # get patient info
         try :
             patient = filename.split("_")[-1].split(".")[0]
@@ -318,7 +320,7 @@ def threaded_work(filenames,cache_num,plots=False,debug=False):
                     plt.close(fig)
                     del fig
                 # CREATE agg statements 
-                d1_exo_time,d1_exo_points = create_derviative(exo_time,exo_points)
+                # d1_exo_time,d1_exo_points = create_derviative(exo_time,exo_points)
                 for start,end in zip(event_slices[:-1],event_slices[1:]):
                     # add zeroth derivation
                     values, columns = create_agg_statements(start,end, exo_points, exo_time, convert_stream_name(stream_name.lower(),""))
@@ -339,6 +341,7 @@ def threaded_work(filenames,cache_num,plots=False,debug=False):
                             exoOnly_controflow[col] = np.nan
                         if "_signal" in col:
                             exo_controlflow.loc[event_id.index,col] = json.dumps(val) 
+                            exoOnly_controflow.loc[event_id.index,col] = json.dumps(val)
                         else: 
                             exo_controlflow.loc[event_id.index,col] = val
                             exoOnly_controflow.loc[event_id.index,col] = val
@@ -368,13 +371,39 @@ def threaded_work(filenames,cache_num,plots=False,debug=False):
                     #         exo_controlflow.loc[event_id.index,col] = val
                     #         exoOnly_controflow.loc[event_id.index,col] = val
     tqdm.write(f"caching out current controlflow events |{cache_num}|...")
+    exo_cols = [
+            col for col in exo_controlflow.columns if "_min" in col
+            ] + [
+            col for col in exo_controlflow.columns if "_mean" in col
+            ] + [
+            col for col in exo_controlflow.columns if "_max" in col
+            ] + [
+            col for col in exo_controlflow.columns if "_stft" in col
+            ]
+    for col,df in zip(exo_cols,[exo_controlflow,exoOnly_controflow]):
+        df[col] = df[col].values.astype(float)
+        df[col] = [ 
+            np.round(val,3)
+            for val 
+            in df[col].values
+        ]
     new_controlflow.to_csv(f"{CACHE_DIR}endo/{cache_num}.csv",index=False)
     exo_controlflow.to_csv(f"{CACHE_DIR}exo/{cache_num}.csv",index=False)
     exoOnly_controflow.to_csv(f"{CACHE_DIR}exoonly/{cache_num}.csv",index=False)
 
 def threaded_workflow(debug:bool=False):
     # create grouper
-    filenames = list(grouper(get_filenames(TARGET_PATTERN),THREAD_GROUPS))
+    patient_universe = pd.read_csv(TARGET_PATIENT_LIST)
+    exogenous = [ 
+        file 
+        for file 
+        in get_filenames(TARGET_PATTERN) 
+        if 
+            int(file.split('_')[1].replace(".csv","")) 
+            in 
+            patient_universe.subject_id.values
+    ]
+    filenames = list(grouper(exogenous,THREAD_GROUPS))
     total_batchs = len(filenames)
     # create threadpool
     tqdm.write("starting work...")
@@ -383,18 +412,37 @@ def threaded_workflow(debug:bool=False):
         pool(delayed(threaded_work)(filegroup,group,False,debug) for group,filegroup in enumerate(tqdm(filenames,desc="thread batchs",ncols=150,total=total_batchs)) )
     # collected cached csvs and recompose
     fileset = [glob(CACHE_DIR+"endo/*.csv"),glob(CACHE_DIR+"exo/*.csv"),glob(CACHE_DIR+"exoonly/*.csv")]
-    swaps = ["newcontrolflow","exocontrolflow","exoOnlycontrolflow"]
+    swaps = ["endo","endo+exo","exo"]
     dfs = [pd.DataFrame(),pd.DataFrame(),pd.DataFrame()]
     for df_key,files,swap in zip(range(len(fileset)),fileset,swaps):
         for file in tqdm(files,desc="merging results",ncols=150):
             dfs[df_key] = pd.concat([dfs[df_key],pd.read_csv(file)],ignore_index=True)
+        # ensure that col types are the same
+        ## checksum is getting non-matching cases
+        exo_cols = [
+            col for col in dfs[df_key].columns if "_min" in col
+            ] + [
+            col for col in dfs[df_key].columns if "_mean" in col
+            ] + [
+            col for col in dfs[df_key].columns if "_max" in col
+            ] + [
+            col for col in dfs[df_key].columns if "_stft" in col
+            ]
+        for col in exo_cols:
+            dfs[df_key][col] = dfs[df_key][col].values.astype(float)
+            dfs[df_key][col] = [ 
+            np.round(val,3)
+            for val 
+            in dfs[df_key][col].values
+        ]
         # save out file
         dfs[df_key] = dfs[df_key].sort_values(by=["trace_concept","time_complete"])
-        dfs[df_key].to_csv(TARGET_OUTPUT.replace("newcontrolflow",swap),index=False)
+        dfs[df_key].to_csv(TARGET_OUTPUT.replace("endo",swap),index=False)
+        #create hashsum of file
+        print(f"{swap} checksum :: {get_hash_checksum(TARGET_OUTPUT.replace('endo',swap))}")
     tqdm.write("outcome saved to hard drive...")
     # perform checksum if samplesize is in testcases
     
-
 def single_threaded_workflow(plots=False,debug=False):
     # GET CONTROL FLOW EVENTS
     controlflow = pd.read_csv(TARGET_CONTROLFLOW)
@@ -477,7 +525,7 @@ def single_threaded_workflow(plots=False,debug=False):
                 if (debug):
                     tqdm.write(f"{patient} -- {key} -- {stream_name} :: is being finalised")
                 # CREATE agg statements 
-                d1_exo_time,d1_exo_points = create_derviative(exo_time,exo_points)
+                # d1_exo_time,d1_exo_points = create_derviative(exo_time,exo_points)
                 for start,end in zip(event_slices[:-1],event_slices[1:]):
                     values, columns = create_agg_statements(start,end, exo_points, exo_time, convert_stream_name(stream_name.lower(),""))
                     # find attached event 
@@ -497,6 +545,7 @@ def single_threaded_workflow(plots=False,debug=False):
                             exoOnly_controflow[col] = np.nan
                         if "_signal" in col:
                             exo_controlflow.loc[event_id.index,col] = json.dumps(val) 
+                            exoOnly_controflow.loc[event_id.index,col] = json.dumps(val) 
                         else: 
                             exo_controlflow.loc[event_id.index,col] = val
                             exoOnly_controflow.loc[event_id.index,col] = val
@@ -528,6 +577,29 @@ def single_threaded_workflow(plots=False,debug=False):
             endo_controlfow.to_csv(TARGET_OUTPUT,index=False)
             exo_controlflow.to_csv(TARGET_OUTPUT.replace("endo","endo+exo"),index=False)
             exoOnly_controflow.to_csv(TARGET_OUTPUT.replace("endo","exo"),index=False)
+    # exo column
+    exo_cols = [
+            col for col in exo_controlflow.columns if "_min" in col
+            ] + [
+            col for col in exo_controlflow.columns if "_mean" in col
+            ] + [
+            col for col in exo_controlflow.columns if "_max" in col
+            ] + [
+            col for col in exo_controlflow.columns if "_stft" in col
+            ]
+    for col in exo_cols:
+        exo_controlflow[col] = exo_controlflow[col].values.astype(float)
+        exo_controlflow[col] = [ 
+            np.round(val,decimals=3)
+            for val 
+            in exo_controlflow[col].values
+        ]
+        exoOnly_controflow[col] = exoOnly_controflow[col].values.astype(float)
+        exoOnly_controflow[col] = [ 
+            np.round(val,decimals=3)
+            for val 
+            in exoOnly_controflow[col].values
+        ]
     #sort values by trace_concept and event's complete time
     endo_controlfow = endo_controlfow.sort_values(by=["trace_concept","time_complete"])
     exo_controlflow = exo_controlflow.sort_values(by=["trace_concept","time_complete"])
@@ -536,6 +608,10 @@ def single_threaded_workflow(plots=False,debug=False):
     endo_controlfow.to_csv(TARGET_OUTPUT,index=False)
     exo_controlflow.to_csv(TARGET_OUTPUT.replace("endo","endo+exo"),index=False)
     exoOnly_controflow.to_csv(TARGET_OUTPUT.replace("endo","exo"),index=False)
+    #shout checksum
+    print(f"endo checksum :: {get_hash_checksum(TARGET_OUTPUT)}")
+    print(f"endo+exo checksum :: {get_hash_checksum(TARGET_OUTPUT.replace('endo','endo+exo'))}")
+    print(f"exo checksum :: {get_hash_checksum(TARGET_OUTPUT.replace('endo','exo'))}")
 
 CACHE_DIR = "process/out/cache/"
 
