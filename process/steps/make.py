@@ -373,11 +373,6 @@ def threaded_work(filenames,cache_num,plots=False,debug=False):
     exoOnly_controflow.to_csv(f"{CACHE_DIR}exoonly/{cache_num}.csv",index=False)
 
 def threaded_workflow(debug:bool=False):
-    # clear cache folder
-    files = glob(CACHE_DIR+"**/*.csv")
-    tqdm.write("clearing cache...")
-    for file in files:
-        remove_file(file)
     # create grouper
     filenames = list(grouper(get_filenames(TARGET_PATTERN),THREAD_GROUPS))
     total_batchs = len(filenames)
@@ -394,7 +389,7 @@ def threaded_workflow(debug:bool=False):
         for file in tqdm(files,desc="merging results",ncols=150):
             dfs[df_key] = pd.concat([dfs[df_key],pd.read_csv(file)],ignore_index=True)
         # save out file
-        dfs[df_key] = dfs[df_key].sort_values(by=["event_id"])
+        dfs[df_key] = dfs[df_key].sort_values(by=["trace_concept","time_complete"])
         dfs[df_key].to_csv(TARGET_OUTPUT.replace("newcontrolflow",swap),index=False)
     tqdm.write("outcome saved to hard drive...")
     # perform checksum if samplesize is in testcases
@@ -533,6 +528,11 @@ def single_threaded_workflow(plots=False,debug=False):
             endo_controlfow.to_csv(TARGET_OUTPUT,index=False)
             exo_controlflow.to_csv(TARGET_OUTPUT.replace("endo","endo+exo"),index=False)
             exoOnly_controflow.to_csv(TARGET_OUTPUT.replace("endo","exo"),index=False)
+    #sort values by trace_concept and event's complete time
+    endo_controlfow = endo_controlfow.sort_values(by=["trace_concept","time_complete"])
+    exo_controlflow = exo_controlflow.sort_values(by=["trace_concept","time_complete"])
+    exoOnly_controflow = exoOnly_controflow.sort_values(by=["trace_concept","time_complete"])
+    #save out
     endo_controlfow.to_csv(TARGET_OUTPUT,index=False)
     exo_controlflow.to_csv(TARGET_OUTPUT.replace("endo","endo+exo"),index=False)
     exoOnly_controflow.to_csv(TARGET_OUTPUT.replace("endo","exo"),index=False)
