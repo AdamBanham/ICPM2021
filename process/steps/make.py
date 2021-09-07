@@ -321,7 +321,7 @@ def threaded_work(filenames,cache_num,plots=False,debug=False):
                 d1_exo_time,d1_exo_points = create_derviative(exo_time,exo_points)
                 for start,end in zip(event_slices[:-1],event_slices[1:]):
                     # add zeroth derivation
-                    values, columns = create_agg_statements(start,end, exo_points, exo_time, convert_stream_name(stream_name.lower(),"D0"))
+                    values, columns = create_agg_statements(start,end, exo_points, exo_time, convert_stream_name(stream_name.lower(),""))
                     # find attached event 
                     idxs = patientflow_group.index[pd.Series(patientflow_time) == end[1]]
                     event_id = patientflow_group.loc[idxs].event_id
@@ -398,16 +398,7 @@ def threaded_workflow():
         dfs[df_key].to_csv(TARGET_OUTPUT.replace("newcontrolflow",swap),index=False)
     tqdm.write("outcome saved to hard drive...")
     # perform checksum if samplesize is in testcases
-    tqdm.write("verifying...")
-    if NUMBER_OF_SAMPLES in TEST_CASES.keys():
-        test_checksum = md5(TEST_CASES[NUMBER_OF_SAMPLES])
-        output_checksum = md5("./out/exo/newcontrolflow_v2.csv")
-        if test_checksum == output_checksum:
-            tqdm.write("output has been veritfied with test case")
-        else :
-            tqdm.write("output does not match test case")
-    else:
-        tqdm.write("No testcase found for this sample size")
+    
 
 def single_threaded_workflow(plots=False,debug=False):
     # GET CONTROL FLOW EVENTS
@@ -417,8 +408,20 @@ def single_threaded_workflow(plots=False,debug=False):
     endo_controlfow = pd.DataFrame([],columns=controlflow.columns, dtype="object")
     exo_controlflow = pd.DataFrame([],columns=controlflow.columns, dtype="object")
     exoOnly_controflow = pd.DataFrame([], columns=TARGET_EXO_COLS, dtype="object")
+    #setup patient universe
+    patient_universe = pd.read_csv(TARGET_PATIENT_LIST)
+    patient_count = patient_universe.shape[0]
+    exogenous = [ 
+        file 
+        for file 
+        in get_filenames(TARGET_PATTERN) 
+        if 
+            int(file.split('_')[1].replace(".csv","")) 
+            in 
+            patient_universe.subject_id.values
+    ]
     # GET INDIVIDUAL PATIENT DATA
-    for num,filename in tqdm(enumerate(get_filenames(TARGET_PATTERN)),total=NUMBER_OF_SAMPLES,desc="Handling Patient Charts"):
+    for num,filename in tqdm(enumerate(exogenous),total=patient_count,desc="Handling Patient Charts"):
         # get all control flow events for this patient
         patient = filename.split("_")[-1].split(".")[0]
         controlflow_events = controlflow[controlflow.trace_patient == patient]
@@ -460,6 +463,8 @@ def single_threaded_workflow(plots=False,debug=False):
                 exo_points = list(filtered_exo_data[filtered_exo_data.label == stream_name].value.values)
                 exo_time = list(filtered_exo_data[filtered_exo_data.label == stream_name].starttime.values)
                 if len(exo_time) < 2:
+                    if (debug):
+                        tqdm.write(f"{patient} -- {key} -- {stream_name} :: not enough exo time points to be considered")
                     continue
                 #  convert to relative time
                 exo_time = [
@@ -472,20 +477,22 @@ def single_threaded_workflow(plots=False,debug=False):
                     event_slices = find_slicing_events(controlflow_time,exo_time)
                 except Exception as e:
                     if (debug):
-                        print("Error occured while slicing: " +str(e))
+                        tqdm.write(f"{patient} -- {key} -- {stream_name} :: error occured while slicing :: {e}")
                     continue
                 if (debug):
-                    tqdm.write(f"{patient} -- {key} -- {stream_name}")
+                    tqdm.write(f"{patient} -- {key} -- {stream_name} :: is being finalised")
                 # CREATE agg statements 
+                d1_exo_time,d1_exo_points = create_derviative(exo_time,exo_points)
                 for start,end in zip(event_slices[:-1],event_slices[1:]):
-                    values, columns = create_agg_statements(start,end, exo_points, exo_time, convert_stream_name(stream_name),debug)
-                    if (debug):
-                        tqdm.write(f"{values}")
-                        tqdm.write(f"{columns}")
+                    values, columns = create_agg_statements(start,end, exo_points, exo_time, convert_stream_name(stream_name.lower(),""))
                     # find attached event 
                     idxs = controlflow_group.index[pd.Series(controlflow_time) == end[1]]
                     event_id = controlflow_group.loc[idxs].event_id
                     if (debug):
+                        tqdm.write(f"{values}")
+                        tqdm.write(f"{len(values)}")
+                        tqdm.write(f"{columns}")
+                        tqdm.write(f"{len(columns)}")
                         tqdm.write(f"attaching to event :: {event_id.values}")
                     # add to copy of controlflow events
                     for val,col in zip(values,columns):
@@ -494,9 +501,7 @@ def single_threaded_workflow(plots=False,debug=False):
                             exo_controlflow[col] = np.nan 
                             exoOnly_controflow[col] = np.nan
                         if "_signal" in col:
-                            pass
-                            # exo_controlflow.loc[event_id.index,col] = json.dumps(val) 
-                            # exoOnly_controflow.loc[event_id.index,col] = json.dumps(val) 
+                            exo_controlflow.loc[event_id.index,col] = json.dumps(val) 
                         else: 
                             exo_controlflow.loc[event_id.index,col] = val
                             exoOnly_controflow.loc[event_id.index,col] = val
@@ -539,28 +544,74 @@ MOVEMENT_OUTPUT = "process/out/movements/movement_log_endo.csv"
 MOVEMENT_EXOONLY_COLS = ["trace_concept","event_name","time_start","time_complete","event_id"]
 MOVEMENTS_PATIENT_UNIVERSE = "mimiciii/out/movements/patient_universe.csv"
 
-PROCEDURE_CONTROLFLOW_CSV = "./in/sepsis/sepsis_controlflow_events.csv"
-PROCEDURE_OUTPUT = "./out/exo/sepsis_newcontrolflow.csv"
-PROCEDURE_EXOONLY_COLS = ["trace_concept","concept:name","time_start","time_complete","event_id"]
-PROCEDURE_PATIENT_UNIVERSE = "mimiciii/out/procedure/patient_universe.csv"
+PROCEDURE_CONTROLFLOW_CSV = "mimiciii/out/procedures/controlflow_events.csv"
+PROCEDURE_OUTPUT = "process/out/procedures/procedures_log_endo.csv"
+PROCEDURE_EXOONLY_COLS = ["trace_concept","event_name","time_start","time_complete","event_id"]
+PROCEDURE_PATIENT_UNIVERSE = "mimiciii/out/procedures/patient_universe.csv"
 
-EXOGENOUS_DATASET_PATTERN = "mimiciii/out/exogenous/*.csv"
+EXOGENOUS_DATASET_PATTERN = "mimiciii/out/exogenous/PATIENT_[0-9]*.csv"
 
 TARGET_CONTROLFLOW = MOVEMENT_CONTROLFLOW_CSV
 TARGET_PATTERN = EXOGENOUS_DATASET_PATTERN
 TARGET_OUTPUT = MOVEMENT_OUTPUT
 TARGET_EXO_COLS = MOVEMENT_EXOONLY_COLS
+TARGET_PATIENT_LIST = MOVEMENTS_PATIENT_UNIVERSE
 
 
-THREADED_WORKFLOW = True
+THREADED_WORKFLOW = False
 THREAD_GROUPS = 25
 NUM_THREADS = -4
 
 
 if __name__ == "__main__":
-    args = sys.argv
-    print(args)
+    # handle args
+    args = sys.argv[1:]
+    arg_sets = grouper(args,2)
+    arg_dict = dict( (set[0],set[1]) for set in arg_sets if len(set) == 2)
+    print("args ::" + str(arg_dict))
+    #clearing cache
+    print("clearing cache...")
+    for file in glob(CACHE_DIR+"**/*.csv"):
+        remove_file(file)
+    print("cache cleared...")
+    print("beginning set up...")
+    #check if have a log to create
+    try :
+        if arg_dict['-log'] == 'movements':
+            TARGET_CONTROLFLOW = MOVEMENT_CONTROLFLOW_CSV
+            TARGET_PATTERN = EXOGENOUS_DATASET_PATTERN
+            TARGET_OUTPUT = MOVEMENT_OUTPUT
+            TARGET_EXO_COLS = MOVEMENT_EXOONLY_COLS
+            TARGET_PATIENT_LIST = MOVEMENTS_PATIENT_UNIVERSE
+        elif arg_dict['-log'] == 'procedures':
+            TARGET_CONTROLFLOW = PROCEDURE_CONTROLFLOW_CSV
+            TARGET_PATTERN = EXOGENOUS_DATASET_PATTERN
+            TARGET_OUTPUT = PROCEDURE_OUTPUT
+            TARGET_EXO_COLS = PROCEDURE_EXOONLY_COLS
+            TARGET_PATIENT_LIST = PROCEDURE_PATIENT_UNIVERSE
+        else:
+            raise ValueError
+    except ValueError:
+        print("Unknown option for -log: possible options are ['movements','procedures']")
+        sys.exit(1)
+    except KeyError:
+        print("Missing -log option: possible options are -log ['movements','procedures']")
+        sys.exit(1)
 
+    try :
+        if arg_dict['-threaded'] == 'true':
+            THREADED_WORKFLOW = True
+        elif arg_dict['-threaded'] == 'false':
+            THREADED_WORKFLOW = False
+        else:
+            raise ValueError
+    except KeyError:
+        print("-threaded option not specified, single thread workflow will be used")
+    except ValueError:
+        print("Unknown option for -threaded: possible options are ['true','false']")
+        sys.exit(1)
+
+    print("set up completed...")
     if (THREADED_WORKFLOW):
         # threadpool to speed up computation
         threaded_workflow()
