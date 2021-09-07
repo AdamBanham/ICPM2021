@@ -102,7 +102,7 @@ A record of patients and their identifiers from mimic-iii extracted by this scri
 Depending on your internet connection, the script will roughly take ~10minutes.
 
 The next step is to collect the control flow perspective for the movements event log. 
-This event log considers events to be the movement or requested movement of a patient between ICU wards.
+This event log captures events to be the movement or requested movement of a patient between ICU wards.
 Again this script will query athena in partitions and will output a single csv containing all events for this event log, ```mimiciii/out/movements/controlflow_events.csv```.
 Depending on your internet connection, the script will roughly take 10~20minutes.
 
@@ -115,6 +115,19 @@ OR if you are not in the pipenv shell:<br>
 pipenv run "python" "./mimiciii/steps/movements.py"
 ```
 
+Finally the last step for extraction to collect the a controlfow set and patient universe for the procedures log.
+This event log captures procedures that occured within a single patient admission for patients that presented with 'RESPIRATORY FAILURE' at admission.
+Again this script will query athena in partitions and will output a single csv containing all events for this event log, ```mimiciii/out/procedures/controlflow_events.csv```.
+Depending on your internet connection, the script will roughly take ~one minute, as this script is quering a very small portion of the MIMIC-III data set.
+Run the following commands to complete this step.
 
+```
+python ./mimiciii/steps/procedures.py
+```
+OR if you are not in the pipenv shell:<br>
+```
+pipenv run "python" "./mimiciii/steps/procedures.py"
+```
 
 # Step Three - Transformation of data to XES
+
