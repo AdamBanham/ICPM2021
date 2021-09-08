@@ -131,10 +131,48 @@ pipenv run "python" "./mimiciii/steps/procedures.py"
 
 # Step Three - Transformation of data to XES
 
-## Procedures log
+The next step in this reproduction data set is to instantiate our xPM framekwork with the given linking, slicing and transformation functions.
+We have included our original code base which performed this task but acknowledge that in its given state it is rather inelgant.
+Future implementations will hopefully have more time to produce a general framework in the form of a python module to simplify these steps or in a Plugin for ProM.
 
+## Procedures log
+To create the procedures log, described in [x], use the following commands. 
+
+```
+python process/steps/make.py -log procedures -threaded true (threads are used to reduce computation time)
+or
+python process/steps/make.py -log procedures (single thread used)
+```
+OR if you are not in the pipenv shell:<br>
+```
+pipenv run "python" "process/steps/make.py" -log procedures -threaded true
+or
+pipenv run "python" "process/steps/make.py" -log procedures
+```
+
+This command will produce three tublar versions of an event log, an endogenous log, a exogenous+endogenous log and a exogenous log.
+To ensure that the same tublar version which was used in [x] was produced, this ![process/out/procedures/readme.md](readme.md) contains checksums for each log.
+Checksums for each log are displayed at the end of script, please compare these checksums to ensure that the same log is produced.
+
+The computation time of this log is less than one minute.
 
 ## Movements log
+To create the movements log, described in [x], use the following commands. 
 
-runtime : ~ 6 hours on single thread
-runtime : ~ 10 minutes
+```
+python process/steps/make.py -log movements -threaded true (threads are used to reduce computation time)
+or
+python process/steps/make.py -log movements (single thread used)
+```
+OR if you are not in the pipenv shell:<br>
+```
+pipenv run "python" "process/steps/make.py" -log movements -threaded true
+or
+pipenv run "python" "process/steps/make.py" -log movements
+
+
+This command will produce three tublar versions of an event log, an endogenous log, a exogenous+endogenous log and a exogenous log.
+To ensure that the same tublar version which was used in [x] was produced, this ![process/out/movements/readme.md](readme.md) contains checksums for each log.
+Checksums for each log are displayed at the end of script, please compare these checksums to ensure that the same log is produced.
+
+The computation time of this log is roughly ~6 hours on a single thread and ~10 minutes with 15 concurrent threads.
