@@ -431,10 +431,10 @@ def threaded_workflow(debug:bool=False):
         for col in exo_cols:
             dfs[df_key][col] = dfs[df_key][col].values.astype(float)
             dfs[df_key][col] = [ 
-            np.round(val,3)
-            for val 
-            in dfs[df_key][col].values
-        ]
+                np.round(val,3)
+                for val 
+                in dfs[df_key][col].values
+            ]
         # save out file
         dfs[df_key] = dfs[df_key].sort_values(by=["trace_concept","time_complete"])
         dfs[df_key].to_csv(TARGET_OUTPUT.replace("endo",swap),index=False)

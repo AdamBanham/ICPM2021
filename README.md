@@ -131,3 +131,10 @@ pipenv run "python" "./mimiciii/steps/procedures.py"
 
 # Step Three - Transformation of data to XES
 
+## Procedures log
+
+
+## Movements log
+
+runtime : ~ 6 hours on single thread
+runtime : ~ 10 minutes
