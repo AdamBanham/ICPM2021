@@ -151,7 +151,7 @@ pipenv run "python" "process/steps/make.py" -log procedures
 ```
 
 This command will produce three tublar versions of an event log, an endogenous log, a exogenous+endogenous log and a exogenous log.
-To ensure that the same tublar version which was used in [x] was produced, this ![process/out/procedures/readme.md](readme.md) contains checksums for each log.
+To ensure that the same tublar version which was used in [x] was produced, this ![readme.md](process/out/procedures/readme.md) contains checksums for each log.
 Checksums for each log are displayed at the end of script, please compare these checksums to ensure that the same log is produced.
 
 The computation time of this log is less than one minute.
@@ -172,7 +172,7 @@ pipenv run "python" "process/steps/make.py" -log movements
 
 
 This command will produce three tublar versions of an event log, an endogenous log, a exogenous+endogenous log and a exogenous log.
-To ensure that the same tublar version which was used in [x] was produced, this ![process/out/movements/readme.md](readme.md) contains checksums for each log.
+To ensure that the same tublar version which was used in [x] was produced, this ![readme.md](process/out/movements/readme.md) contains checksums for each log.
 Checksums for each log are displayed at the end of script, please compare these checksums to ensure that the same log is produced.
 
 The computation time of this log is roughly ~6 hours on a single thread and ~10 minutes with 15 concurrent threads.
