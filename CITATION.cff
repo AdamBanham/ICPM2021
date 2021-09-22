@@ -21,8 +21,8 @@ doi: 10.5281/zenodo.1234
 date-released: 2021-09-21
 url: "https://github.com/AdamBanham/ICPM2021"
 preferred-citation:
-  type: proceedings
-  booktitle: "Workshop on Event Data and Behavioral Analytics (EdbA) co-located in the International Conference on Process Mining (ICPM)"
+  type: InCollection
+  booktitle: "Lecture Notes in Business Information Processing (LNBIP) "
   title: "xPM: A Framework for Process Mining with Exogenous Data"
   year: 2021
   month: 11
@@ -39,5 +39,5 @@ preferred-citation:
   - family-names: "Andrews"
     given-names: "Robert"
     orcid: "https://orcid.org/0000-0001-7743-5772"
-  publisher: Springer
+  publisher: "Springer International Publishing"
 
