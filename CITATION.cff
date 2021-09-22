@@ -1,13 +1,19 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you reuse these data sets, please cite the original paper as below."
 authors:
-- family-names: "YOUR_NAME_HERE"
-  given-names: "YOUR_NAME_HERE"
-  orcid: "https://orcid.org/0000-0000-0000-0000"
-- family-names: "Lisa"
-  given-names: "Mona"
-  orcid: "https://orcid.org/0000-0000-0000-0000"
-title: "ICPM2021"
+- family-names: "Banham"
+  given-names: "Adam"
+  orcid: "https://orcid.org/0000-0001-9912-8220"
+- family-names: "Leemans"
+  given-names: "Sander J.J."
+  orcid: "https://orcid.org/0000-0002-5201-7125"
+- family-names: "Wynn"
+  given-names: "Moe T."
+  orcid: "https://orcid.org/0000-0002-7205-8821"
+- family-names: "Andrews"
+  given-names: "Robert"
+  orcid: "https://orcid.org/0000-0001-7743-5772"
+title: "xPM: A Framework for Process Mining with Exogenous Data"
 version: 1.0.0
 doi: 10.5281/zenodo.1234
 date-released: 2021-09-21
