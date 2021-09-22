@@ -1,5 +1,9 @@
 cff-version: 1.2.0
 message: "If you reuse these data sets, please cite the original paper as below."
+type: article
+conference: "Workshop on Event Data and Behavioral Analytics (EdbA) co-located in the International Conference on Process Mining (ICPM)"
+year: 2021
+month: 11
 authors:
 - family-names: "Banham"
   given-names: "Adam"
