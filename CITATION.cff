@@ -21,8 +21,9 @@ date-released: 2021-09-21
 url: "https://github.com/AdamBanham/ICPM2021"
 preferred-citation:
   type: "incollection"
-  booktitle: "Lecture Notes in Business Information Processing (LNBIP) "
+  booktitle: "Process Mining Workshops - {ICPM} 2021 International Workshops, Eindhoven, Netherlands, October 31 - November 4, 2021"
   title: "xPM: A Framework for Process Mining with Exogenous Data"
+  series: "Lecture Notes in Business Information Processing"
   year: 2021
   month: 11
   authors:
@@ -38,5 +39,5 @@ preferred-citation:
   - family-names: "Andrews"
     given-names: "Robert"
     orcid: "https://orcid.org/0000-0001-7743-5772"
-  publisher: "Springer International Publishing"
+  publisher: "Springer"
 
