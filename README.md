@@ -1,5 +1,5 @@
 # ICPM2021 - Data Sources
-This is a reproduction repository for MIMIC III ETL used in [x].
+This is a reproduction repository for MIMIC III ETL used in "xPM: A Framework for Process Mining with Exogenous Data"[1](https://doi.org/10.1007/978-3-030-98581-3_7).
 Before following the steps detailed below to reproduce our data set, ensure access to the MIMIC III data set. Which includes completing the required ethics training to be using this publicly available data set.<br><br>
 The MIMIC III dataset and access information can be found at: <br>https://physionet.org/content/mimiciii/1.4/ <br>
 If you wanted an in-depth understanding of the data available in this dataset, please refer to the official documentation at: <br>https://mimic.mit.edu/docs/iii/ <br><br>
