@@ -20,11 +20,13 @@ version: 1.0.0
 date-released: 2021-09-21
 url: "https://github.com/AdamBanham/ICPM2021"
 preferred-citation:
-  type: "incollection"
-  booktitle: "Process Mining Workshops - {ICPM} 2021 International Workshops, Eindhoven, Netherlands, October 31 - November 4, 2021"
+  type: "conference-paper"
+  booktitle: "Process Mining Workshops. ICPM 2021"
   title: "xPM: A Framework for Process Mining with Exogenous Data"
   series: "Lecture Notes in Business Information Processing"
-  year: 2021
+  doi: https://doi.org/10.1007/978-3-030-98581-3_7
+  volume: 433 
+  year: 2022
   month: 11
   authors:
   - family-names: "Banham"
