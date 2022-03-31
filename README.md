@@ -175,5 +175,6 @@ Checksums for each log are displayed at the end of the script. Please compare th
 The computation time of this log is roughly ~6 hours on a single thread and ~10 minutes with 15 concurrent threads.
 
 # References
-[1] Banham, A., Leemans, S.J.J., Wynn, M.T., Andrews, R. (2022). xPM: A Framework for Process Mining with Exogenous Data. In: Munoz-Gama, J., Lu, X. (eds) Process Mining Workshops. ICPM 2021. Lecture Notes in Business Information Processing, vol 433. Springer, Cham. https://doi.org/10.1007/978-3-030-98581-3_7
+<br>
+[1] Banham, A., Leemans, S.J.J., Wynn, M.T., Andrews, R. (2022). xPM: A Framework for Process Mining with Exogenous Data. In: Munoz-Gama, J., Lu, X. (eds) Process Mining Workshops. ICPM 2021. Lecture Notes in Business Information Processing, vol 433. Springer, Cham. https://doi.org/10.1007/978-3-030-98581-3_7 <br><br>
 [2] Johnson, A., Pollard, T., & Mark, R. (2016). MIMIC-III Clinical Database (version 1.4). PhysioNet. https://doi.org/10.13026/C2XW26.<br>
