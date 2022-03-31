@@ -58,7 +58,7 @@ Now that we have a local region copy of the mimic-iii dataset, we follow the exa
 The difference in compute times (1557s/157s), and cost ($2.97/$0.05) are notable in the example.
 However, we have modified their cloud formation template and created a script to handle the launching of these resources.
 The cloud formation file can be found [here](data/in/athena_template.yaml), for inspection. 
-This cloud stack will create an Athena database and optimised table for each csv in the mimic-iii data set.
+This cloud stack will create an Athena database and optimised table for each parquet in the mimic-iii data set.
 
 
 Run the following commands to create a cloud formation stack, which will deploy all the needed resources to run our ETL scripts over Athena.
@@ -129,12 +129,12 @@ pipenv run "python" "./mimiciii/steps/procedures.py"
 
 # Step Three - Transformation of data to XES
 
-The next step in this reproduction data set is to instantiate our xPM framework with the given linking, slicing and transformation functions in our evaluation in [x].
+The next step in this reproduction data set is to instantiate our xPM framework with the given linking, slicing and transformation functions in our evaluation in [1].
 We have included our original code base, which performed this task but acknowledge that in its given state, it is rather inelegant.
 Future implementations will hopefully have more time to produce a general framework in a python module to simplify these steps or in a Plugin for ProM.
 
 ## Procedures log
-To create the procedures log, described in [x], use the following commands. 
+To create the procedures log, described in [1], use the following commands. 
 
 ```
 python process/steps/make.py -log procedures -threaded true (threads are used to reduce computation time)
@@ -149,12 +149,12 @@ pipenv run "python" "process/steps/make.py" -log procedures
 ```
 
 This command will produce three tubular versions of an event log, an endogenous log, an exogenous+endogenous log and an exogenous log.
-To ensure that the same tubular version which was used in [x] was produced, this [readme.md](process/out/procedures/readme.md) contains checksums for each log.
+To ensure that the same tubular version which was used in [1] was produced, this [readme.md](process/out/procedures/readme.md) contains checksums for each log.
 Checksums for each log are displayed at the end of the script. Please compare these checksums to ensure that the same log is produced.
 
 The computation time of this log is less than one minute.
 ## Movements log
-To create the movements log, described in [x], use the following commands. 
+To create the movements log, described in [1], use the following commands. 
 
 ```
 python process/steps/make.py -log movements -threaded true (threads are used to reduce computation time)
